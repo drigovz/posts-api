@@ -1,8 +1,0 @@
-{
-  "runtimeOptions": {
-    "additionalProbingPaths": [
-      "C:\\Users\\drigo\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\drigo\\.nuget\\packages"
-    ]
-  }
-}
