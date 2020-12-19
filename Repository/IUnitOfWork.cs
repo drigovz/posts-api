@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using PostsApi.Repository.Posts;
 
 namespace PostsApi.Repository
@@ -6,6 +7,6 @@ namespace PostsApi.Repository
     {
         IPostsRepository PostsRepository { get; }
 
-        void Commit();
+        Task Commit();
     }
 }

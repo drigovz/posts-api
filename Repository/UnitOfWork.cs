@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using PostsApi.Data;
 using PostsApi.Repository.Posts;
 
@@ -21,9 +22,9 @@ namespace PostsApi.Repository
             }
         }
 
-        public void Commit()
+        public async Task Commit()
         {
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public void Dispose()
