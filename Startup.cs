@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PostsApi.Data;
 using PostsApi.DTOs.Mappings;
+using PostsApi.Repository;
 
 namespace PostsApi
 {
@@ -32,6 +33,7 @@ namespace PostsApi
             mappingConfig.AssertConfigurationIsValid();
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
