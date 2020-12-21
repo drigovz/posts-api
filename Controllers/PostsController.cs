@@ -116,5 +116,43 @@ namespace PostsApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error when try to connect on server");
             }
         }
+
+        [HttpGet("comment/")]
+        public async Task<ActionResult<IEnumerable<PostDTO>>> GetMostCommented()
+        {
+            try
+            {
+                var posts = await _uof.PostsRepository.GetMostCommentedsPosts();
+                if (posts == null)
+                    return StatusCode(StatusCodes.Status200OK, $"No posts registred");
+                else
+                {
+                    return _mapper.Map<List<PostDTO>>(posts);
+                }
+            }
+            catch (System.Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error when try to connect on server");
+            }
+        }
+
+        [HttpGet("{tagname:alpha}")]
+        public async Task<ActionResult<IEnumerable<PostDTO>>> GetPostTagAsync([BindRequired] string tagname)
+        {
+            try
+            {
+                var posts = await _uof.PostsRepository.GetPostsByTag(tagname);
+                if (posts == null)
+                    return StatusCode(StatusCodes.Status200OK, $"No post registred with tag {tagname}");
+                else
+                {
+                    return _mapper.Map<IEnumerable<PostDTO>>(posts).ToList();
+                }
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error when try to connect on server");
+            }
+        }
     }
 }

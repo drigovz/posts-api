@@ -10,5 +10,7 @@ namespace PostsApi.Repository.Posts
     {
         Task<IEnumerable<Post>> GetPostsForDate(DateTime date);
         Task<IEnumerable<Post>> GetPostsForCategory(int category);
+        Task<IEnumerable<Post>> GetMostCommentedsPosts();
+        Task<IEnumerable<Post>> GetPostsByTag(string tag);
     }
 }
