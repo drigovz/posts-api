@@ -1,9 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PostsApi.Models;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PostsApi.Repository;
+using PostsApi.DTOs;
 
 namespace PostsApi.Controllers
 {
@@ -14,18 +18,98 @@ namespace PostsApi.Controllers
     public class PostsController : ControllerBase
     {
         private readonly IUnitOfWork _uof;
+        private readonly IMapper _mapper;
 
-        public PostsController(IUnitOfWork uof)
+        public PostsController(IUnitOfWork uof, IMapper mapper)
         {
             _uof = uof;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Post>> GetAll()
+        public ActionResult<IEnumerable<PostDTO>> GetAll()
         {
             try
             {
-                return _uof.PostsRepository.Get().ToList();
+                var posts = _uof.PostsRepository.Get().ToList();
+                return _mapper.Map<List<PostDTO>>(posts);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error when try to connect on server");
+            }
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetPostAsync([BindRequired] int id)
+        {
+            try
+            {
+                var post = await _uof.PostsRepository.GetByIdAsync(p => p.Id == id);
+                if (post == null)
+                    return NotFound($"The post index {id} not found!");
+                else
+                {
+                    var postDTO = _mapper.Map<PostDTO>(post);
+                    return new ObjectResult(postDTO);
+                }
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error when try to connect to server");
+            }
+        }
+
+        [HttpGet("{date}")]
+        public async Task<ActionResult<IEnumerable<PostDTO>>> GetPostDateAsync([BindRequired] DateTime date)
+        {
+            try
+            {
+                var posts = await _uof.PostsRepository.GetPostsForDate(date);
+                if (posts == null)
+                    return StatusCode(StatusCodes.Status200OK, $"No post registred with date {date}");
+                else
+                {
+                    return _mapper.Map<IEnumerable<PostDTO>>(posts).ToList();
+                }
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error when try to connect on server");
+            }
+        }
+
+        [HttpGet("category/{category}")]
+        public async Task<ActionResult<IEnumerable<PostDTO>>> GetPostCategoryAsync([BindRequired] int category)
+        {
+            try
+            {
+                var posts = await _uof.PostsRepository.GetPostsForCategory(category);
+                if (posts == null)
+                    return StatusCode(StatusCodes.Status200OK, $"No posts in category {category}");
+                else
+                {
+                    return _mapper.Map<IEnumerable<PostDTO>>(posts).ToList();
+                }
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error when try to connect on server");
+            }
+        }
+
+        [HttpGet("top/")]
+        public ActionResult<IEnumerable<PostDTO>> GetTop()
+        {
+            try
+            {
+                var posts = _uof.PostsRepository.Get().OrderBy(p => p.NumLikes).ToList();
+                if (posts == null)
+                    return StatusCode(StatusCodes.Status200OK, $"No posts registred");
+                else
+                {
+                    return _mapper.Map<List<PostDTO>>(posts);
+                }
             }
             catch
             {
