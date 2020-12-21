@@ -176,5 +176,27 @@ namespace PostsApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error when try to create a new post");
             }
         }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> UpdateAsync([BindRequired] int id, [FromBody] PostDTO postDTO)
+        {
+            try
+            {
+                if (postDTO == null || postDTO.Id != id)
+                    return BadRequest($"Post with id {id} not found");
+
+                var post = _mapper.Map<Post>(postDTO);
+                post.UpdatedAt = DateTime.UtcNow;
+                _uof.PostsRepository.Update(post);
+                await _uof.Commit();
+
+                return StatusCode(StatusCodes.Status200OK, $"Post id {id} update succesfull");
+            }
+            catch //(Exception ex)
+            {
+                //throw ex;
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error when try to update post id {id}");
+            }
+        }
     }
 }
