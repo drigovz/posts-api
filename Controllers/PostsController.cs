@@ -192,10 +192,29 @@ namespace PostsApi.Controllers
 
                 return StatusCode(StatusCodes.Status200OK, $"Post id {id} update succesfull");
             }
-            catch //(Exception ex)
+            catch
             {
-                //throw ex;
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Error when try to update post id {id}");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAsync([BindRequired] int id)
+        {
+            try
+            {
+                var post = await _uof.PostsRepository.GetByIdAsync(p => p.Id == id);
+                if (post == null)
+                    return NotFound($"Post with id {id} not found");
+
+                _uof.PostsRepository.Delete(post);
+                await _uof.Commit();
+
+                return StatusCode(StatusCodes.Status200OK, "Post deleted succesfull");
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error when try to delete post id {id}");
             }
         }
     }
