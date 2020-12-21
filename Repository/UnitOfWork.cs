@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using PostsApi.Data;
+using PostsApi.Repository.Categories;
 using PostsApi.Repository.Posts;
 
 namespace PostsApi.Repository
@@ -7,6 +8,7 @@ namespace PostsApi.Repository
     public class UnitOfWork : IUnitOfWork
     {
         private PostsRepository _postsRepository;
+        private CategoriesRepository _categoriesRepository;
         public AppDbContext _context;
 
         public UnitOfWork(AppDbContext context)
@@ -19,6 +21,14 @@ namespace PostsApi.Repository
             get
             {
                 return _postsRepository = _postsRepository ?? new PostsRepository(_context);
+            }
+        }
+
+        public ICategoriesRepository CategoriesRepository
+        {
+            get
+            {
+                return _categoriesRepository = _categoriesRepository ?? new CategoriesRepository(_context);
             }
         }
 
