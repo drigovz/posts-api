@@ -11,6 +11,6 @@ namespace PostsApi.Models
         public int Id { get; set; }
         [Required(ErrorMessage = "The atribute text is required")]
         public string Text { get; set; }
-        public DateTime Date { get; set; } = DateTime.UtcNow;
+        public DateTime? Date { get; set; } = DateTime.UtcNow;
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PostsApi.Repository;
 using PostsApi.DTOs;
+using PostsApi.Models;
 
 namespace PostsApi.Controllers
 {
@@ -152,6 +153,27 @@ namespace PostsApi.Controllers
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error when try to connect on server");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAsync([FromBody] PostDTO postDTO)
+        {
+            try
+            {
+                if (postDTO == null)
+                    return BadRequest();
+
+                var post = _mapper.Map<Post>(postDTO);
+                _uof.PostsRepository.Add(post);
+                await _uof.Commit();
+
+                var result = _mapper.Map<PostDTO>(post);
+                return new ObjectResult(result);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error when try to create a new post");
             }
         }
     }

@@ -12,7 +12,7 @@ namespace PostsApi.Models
         [Required(ErrorMessage = "The attribute name is required")]
         [MaxLength(40)]
         public string Name { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
     }
 }
