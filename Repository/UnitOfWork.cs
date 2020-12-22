@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using PostsApi.Data;
 using PostsApi.Repository.Categories;
+using PostsApi.Repository.Comments;
 using PostsApi.Repository.Posts;
 
 namespace PostsApi.Repository
@@ -9,6 +10,7 @@ namespace PostsApi.Repository
     {
         private PostsRepository _postsRepository;
         private CategoriesRepository _categoriesRepository;
+        private CommentsRepository _commentsRepository;
         public AppDbContext _context;
 
         public UnitOfWork(AppDbContext context)
@@ -29,6 +31,14 @@ namespace PostsApi.Repository
             get
             {
                 return _categoriesRepository = _categoriesRepository ?? new CategoriesRepository(_context);
+            }
+        }
+
+        public ICommentsRepository CommentsRepository
+        {
+            get
+            {
+                return _commentsRepository = _commentsRepository ?? new CommentsRepository(_context);
             }
         }
 

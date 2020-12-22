@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PostsApi.Repository;
 using PostsApi.DTOs;
 using PostsApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace PostsApi.Controllers
 {
@@ -32,7 +33,7 @@ namespace PostsApi.Controllers
         {
             try
             {
-                var posts = _uof.PostsRepository.Get().ToList();
+                var posts = _uof.PostsRepository.Get().Include(p => p.Comments).Include(p => p.Category).ToList();
                 return _mapper.Map<List<PostDTO>>(posts);
             }
             catch

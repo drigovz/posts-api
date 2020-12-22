@@ -33,7 +33,7 @@ namespace PostsApi.Controllers
         {
             try
             {
-                var category = _uof.CategoriesRepository.Get().Include(c => c.Posts ).ToList();
+                var category = _uof.CategoriesRepository.Get().Include(c => c.Posts).ToList();
                 return _mapper.Map<List<CategoryDTO>>(category);
             }
             catch
