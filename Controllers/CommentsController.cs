@@ -4,7 +4,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.EntityFrameworkCore;
 using PostsApi.DTOs;
 using PostsApi.Models;
 using PostsApi.Repository;
@@ -83,7 +82,6 @@ namespace PostsApi.Controllers
                     return BadRequest();
 
                 var comment = _mapper.Map<Comment>(commentDTO);
-                comment.Post = await _uof.PostsRepository.GetByIdAsync(p => p.Id == commentDTO.PostId);
                 _uof.CommentsRepository.Add(comment);
                 await _uof.Commit();
 

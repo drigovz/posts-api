@@ -12,6 +12,5 @@ namespace PostsApi.Models
         public string Text { get; set; }
         public DateTime? Date { get; set; } = DateTime.UtcNow;
         public int PostId { get; set; }
-        public Post Post { get; set; }
     }
 }

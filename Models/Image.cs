@@ -10,5 +10,6 @@ namespace PostsApi.Models
         public string Description { get; set; }
         [Required(ErrorMessage = "The attribute URL is required")]
         public string Url { get; set; }
+        public int PostId { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using PostsApi.Data;
 using PostsApi.Repository.Categories;
 using PostsApi.Repository.Comments;
 using PostsApi.Repository.Posts;
+using PostsApi.Repository.Tags;
 
 namespace PostsApi.Repository
 {
@@ -11,6 +12,7 @@ namespace PostsApi.Repository
         private PostsRepository _postsRepository;
         private CategoriesRepository _categoriesRepository;
         private CommentsRepository _commentsRepository;
+        private TagsRepository _tagsRepository;
         public AppDbContext _context;
 
         public UnitOfWork(AppDbContext context)
@@ -39,6 +41,14 @@ namespace PostsApi.Repository
             get
             {
                 return _commentsRepository = _commentsRepository ?? new CommentsRepository(_context);
+            }
+        }
+
+        public ITagsRepository TagsRepository
+        {
+            get
+            {
+                return _tagsRepository = _tagsRepository ?? new TagsRepository(_context);
             }
         }
 
