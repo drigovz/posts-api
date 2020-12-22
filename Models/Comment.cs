@@ -7,7 +7,6 @@ namespace PostsApi.Models
     [Table("Comments")]
     public class Comment
     {
-        [Key]
         public int Id { get; set; }
         [Required(ErrorMessage = "The atribute text is required")]
         public string Text { get; set; }

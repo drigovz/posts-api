@@ -131,7 +131,7 @@ namespace PostsApi.Controllers
                     return _mapper.Map<List<PostDTO>>(posts);
                 }
             }
-            catch (System.Exception)
+            catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error when try to connect on server");
             }
@@ -164,7 +164,8 @@ namespace PostsApi.Controllers
                 if (postDTO == null)
                     return BadRequest();
 
-                var post = _mapper.Map<Post>(postDTO);
+                var post = _mapper.Map<Post>(postDTO);    
+                post.Category = await _uof.CategoriesRepository.GetByIdAsync(c => c.Id == post.CategoryId);            
                 _uof.PostsRepository.Add(post);
                 await _uof.Commit();
 

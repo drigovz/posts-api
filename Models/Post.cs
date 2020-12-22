@@ -8,7 +8,6 @@ namespace PostsApi.Models
     [Table("Posts")]
     public class Post
     {
-        [Key]
         public int Id { get; set; }
         [Required(ErrorMessage = "The attribute title is required")]
         public string Title { get; set; }
@@ -19,9 +18,9 @@ namespace PostsApi.Models
         public string Image { get; set; }
         public bool? IsActive { get; set; } = true;
         [Required(ErrorMessage = "The attribute category is required")]
-        public int CategoryId { get; set; }
         public int NumLikes { get; set; } = 0;
         public int Views { get; set; } = 0;
+        public int CategoryId { get; set; }
         public Category Category { get; set; }
         public ICollection<Tag> Tags { get; set; } = new List<Tag>();
         public ICollection<Image> Images { get; set; } = new List<Image>();

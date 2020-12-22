@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using PostsApi.DTOs;
 using PostsApi.Models;
 using PostsApi.Repository;
@@ -32,7 +33,7 @@ namespace PostsApi.Controllers
         {
             try
             {
-                var category = _uof.CategoriesRepository.Get().ToList();
+                var category = _uof.CategoriesRepository.Get().Include(c => c.Posts ).ToList();
                 return _mapper.Map<List<CategoryDTO>>(category);
             }
             catch

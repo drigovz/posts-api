@@ -7,7 +7,6 @@ namespace PostsApi.Models
     [Table("Tags")]
     public class Tag
     {
-        [Key]
         public int Id { get; set; }
         [Required(ErrorMessage = "The attribute name is required")]
         [MaxLength(40)]
