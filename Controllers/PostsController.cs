@@ -37,8 +37,7 @@ namespace PostsApi.Controllers
                                                 .AsNoTracking()
                                                 .Include(p => p.Comments)
                                                 .Include(p => p.Tags)
-                                                .Include(p => p.Images)
-                                                .ToList();
+                                                .Include(p => p.Images);
                 return _mapper.Map<List<PostDTO>>(posts);
             }
             catch
@@ -57,10 +56,10 @@ namespace PostsApi.Controllers
                     return NotFound($"The post index {id} not found!");
                 else
                 {
-                    post.Comments = _uof.CommentsRepository.Get().Where(c => c.PostId == id).ToList();
-                    // post.Tags = _uof.CommentsRepository.Get().Where(c => c.PostId == id).ToList();
-                    // post.Images = _uof.CommentsRepository.Get().Where(c => c.PostId == id).ToList();
-                    post.Views ++;                    
+                    post.Comments = _uof.CommentsRepository.Get().Where(x => x.PostId == id).ToList();
+                    post.Tags = _uof.TagsRepository.Get().Where(x => x.PostId == id).ToList();
+                    post.Images = _uof.ImagesRepository.Get().Where(x => x.PostId == id).ToList();
+                    post.Views++;
                     await _uof.Commit();
 
                     var postDTO = _mapper.Map<PostDTO>(post);
@@ -176,7 +175,7 @@ namespace PostsApi.Controllers
                 if (postDTO == null)
                     return BadRequest();
 
-                var post = _mapper.Map<Post>(postDTO);    
+                var post = _mapper.Map<Post>(postDTO);
                 //post.Category = await _uof.CategoriesRepository.GetByIdAsync(c => c.Id == post.CategoryId);            
                 _uof.PostsRepository.Add(post);
                 await _uof.Commit();

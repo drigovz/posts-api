@@ -90,7 +90,7 @@ namespace PostsApi.Controllers
                     return BadRequest($"Tag with id {id} not found");
 
                 var tag = _mapper.Map<Tag>(tagDTO);
-                tag.UpdatedAt = DateTime.UtcNow;
+                //tag.UpdatedAt = DateTime.UtcNow;
                 _uof.TagsRepository.Update(tag);
                 await _uof.Commit();
 

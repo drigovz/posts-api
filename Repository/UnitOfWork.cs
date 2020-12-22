@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using PostsApi.Data;
 using PostsApi.Repository.Categories;
 using PostsApi.Repository.Comments;
+using PostsApi.Repository.Images;
 using PostsApi.Repository.Posts;
 using PostsApi.Repository.Tags;
 
@@ -13,6 +14,7 @@ namespace PostsApi.Repository
         private CategoriesRepository _categoriesRepository;
         private CommentsRepository _commentsRepository;
         private TagsRepository _tagsRepository;
+        private ImageRepository _imagesRepository;
         public AppDbContext _context;
 
         public UnitOfWork(AppDbContext context)
@@ -49,6 +51,14 @@ namespace PostsApi.Repository
             get
             {
                 return _tagsRepository = _tagsRepository ?? new TagsRepository(_context);
+            }
+        }
+
+        public IImageRepository ImagesRepository
+        {
+            get
+            {
+                return _imagesRepository = _imagesRepository ?? new ImageRepository(_context);
             }
         }
 

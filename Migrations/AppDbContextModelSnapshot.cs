@@ -19,21 +19,6 @@ namespace PostsApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.1");
 
-            modelBuilder.Entity("PostTag", b =>
-                {
-                    b.Property<int>("PostsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PostsId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("PostTag");
-                });
-
             modelBuilder.Entity("PostsApi.Models.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -93,7 +78,7 @@ namespace PostsApi.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PostId")
+                    b.Property<int>("PostId")
                         .HasColumnType("int");
 
                     b.Property<string>("Url")
@@ -169,47 +154,35 @@ namespace PostsApi.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PostId");
+
                     b.ToTable("Tags");
-                });
-
-            modelBuilder.Entity("PostTag", b =>
-                {
-                    b.HasOne("PostsApi.Models.Post", null)
-                        .WithMany()
-                        .HasForeignKey("PostsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PostsApi.Models.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("PostsApi.Models.Comment", b =>
                 {
-                    b.HasOne("PostsApi.Models.Post", "Post")
+                    b.HasOne("PostsApi.Models.Post", null)
                         .WithMany("Comments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("PostsApi.Models.Image", b =>
                 {
-                    b.HasOne("PostsApi.Models.Post", "Post")
+                    b.HasOne("PostsApi.Models.Post", null)
                         .WithMany("Images")
-                        .HasForeignKey("PostId");
-
-                    b.Navigation("Post");
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PostsApi.Models.Post", b =>
@@ -217,6 +190,15 @@ namespace PostsApi.Migrations
                     b.HasOne("PostsApi.Models.Category", null)
                         .WithMany("Posts")
                         .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PostsApi.Models.Tag", b =>
+                {
+                    b.HasOne("PostsApi.Models.Post", null)
+                        .WithMany("Tags")
+                        .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -231,6 +213,8 @@ namespace PostsApi.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Images");
+
+                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }
