@@ -139,6 +139,21 @@ namespace PostsApi.Migrations
                     b.ToTable("Posts");
                 });
 
+            modelBuilder.Entity("PostsApi.Models.PostTag", b =>
+                {
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TagId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PostId", "TagId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("PostsTags");
+                });
+
             modelBuilder.Entity("PostsApi.Models.Tag", b =>
                 {
                     b.Property<int>("Id")
@@ -154,15 +169,10 @@ namespace PostsApi.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
-                    b.Property<int>("PostId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PostId");
 
                     b.ToTable("Tags");
                 });
@@ -194,13 +204,23 @@ namespace PostsApi.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PostsApi.Models.Tag", b =>
+            modelBuilder.Entity("PostsApi.Models.PostTag", b =>
                 {
-                    b.HasOne("PostsApi.Models.Post", null)
+                    b.HasOne("PostsApi.Models.Post", "Posts")
                         .WithMany("Tags")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("PostsApi.Models.Tag", "Tags")
+                        .WithMany("Posts")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Posts");
+
+                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("PostsApi.Models.Category", b =>
@@ -215,6 +235,11 @@ namespace PostsApi.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("Tags");
+                });
+
+            modelBuilder.Entity("PostsApi.Models.Tag", b =>
+                {
+                    b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618
         }

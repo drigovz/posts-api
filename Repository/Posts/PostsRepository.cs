@@ -33,7 +33,8 @@ namespace PostsApi.Repository.Posts
 
         public async Task<IEnumerable<Post>> GetPostsByTag(string tag)
         {
-            return await Get().Where(p => p.Tags.Any(t => t.Name == tag)).ToListAsync();
+            // return await Get().Where(p => p.Tags.Any(t => t.Tags.Select(x => x.Name== tag))).ToListAsync();
+            return await Get().Where(p => p.Tags.Any(t => t.Tags.Name== tag)).ToListAsync();
         }
     }
 }

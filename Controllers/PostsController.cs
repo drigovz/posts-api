@@ -36,7 +36,7 @@ namespace PostsApi.Controllers
                 var posts = _uof.PostsRepository.Get()
                                                 .AsNoTracking()
                                                 .Include(p => p.Comments)
-                                                .Include(p => p.Tags)
+                                                .Include(p => p.Tags).ThenInclude(p => p.Tags)
                                                 .Include(p => p.Images);
                 return _mapper.Map<List<PostDTO>>(posts);
             }
@@ -57,7 +57,7 @@ namespace PostsApi.Controllers
                 else
                 {
                     post.Comments = _uof.CommentsRepository.Get().Where(x => x.PostId == id).ToList();
-                    post.Tags = _uof.TagsRepository.Get().Where(x => x.PostId == id).ToList();
+                    //post.Tags = _uof.TagsRepository.Get().Where(x => x.PostId == id).ToList();
                     post.Images = _uof.ImagesRepository.Get().Where(x => x.PostId == id).ToList();
                     post.Views++;
                     await _uof.Commit();

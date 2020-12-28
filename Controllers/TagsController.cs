@@ -81,6 +81,27 @@ namespace PostsApi.Controllers
             }
         }
 
+        [HttpPost("posts")]
+        public async Task<IActionResult> CreateAsync([FromBody] PostTagDTO postTagDTO)
+        {
+            try
+            {
+                if (postTagDTO == null)
+                    return BadRequest();
+
+                var postTag = _mapper.Map<PostTag>(postTagDTO);
+                _uof.PostsTagsRepository.Add(postTag);
+                await _uof.Commit();
+
+                var result = _mapper.Map<PostTagDTO>(postTag);
+                return new ObjectResult(result);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error when try to create a new tag");
+            }
+        }
+
         [HttpPatch("{id}")]
         public async Task<ActionResult> UpdateAsync([BindRequired] int id, [FromBody] TagDTO tagDTO)
         {
@@ -90,7 +111,8 @@ namespace PostsApi.Controllers
                     return BadRequest($"Tag with id {id} not found");
 
                 var tag = _mapper.Map<Tag>(tagDTO);
-                //tag.UpdatedAt = DateTime.UtcNow;
+                tag.UpdatedAt = DateTime.UtcNow;
+                tag.CreatedAt = tag.CreatedAt;
                 _uof.TagsRepository.Update(tag);
                 await _uof.Commit();
 

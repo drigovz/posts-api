@@ -12,6 +12,7 @@ namespace PostsApi.DTOs.Mappings
             CreateMap<Image, ImageDTO>().ReverseMap();
             CreateMap<Post, PostDTO>().ReverseMap();
             CreateMap<Tag, TagDTO>().ReverseMap();
+            CreateMap<PostTag, PostTagDTO>().ReverseMap();
         }
     }
 }

@@ -4,6 +4,7 @@ using PostsApi.Repository.Categories;
 using PostsApi.Repository.Comments;
 using PostsApi.Repository.Images;
 using PostsApi.Repository.Posts;
+using PostsApi.Repository.PostsTags;
 using PostsApi.Repository.Tags;
 
 namespace PostsApi.Repository
@@ -15,6 +16,7 @@ namespace PostsApi.Repository
         private CommentsRepository _commentsRepository;
         private TagsRepository _tagsRepository;
         private ImageRepository _imagesRepository;
+        private PostTagRepository _postTagRepositoryy;
         public AppDbContext _context;
 
         public UnitOfWork(AppDbContext context)
@@ -59,6 +61,14 @@ namespace PostsApi.Repository
             get
             {
                 return _imagesRepository = _imagesRepository ?? new ImageRepository(_context);
+            }
+        }
+
+        public IPostTagRepository PostsTagsRepository
+        {
+            get
+            {
+                return _postTagRepositoryy = _postTagRepositoryy ?? new PostTagRepository(_context);
             }
         }
 

@@ -22,10 +22,10 @@ namespace PostsApi.Models
         public int NumLikes { get; set; } = 0;
         public int Views { get; set; } = 0;
         public int CategoryId { get; set; }
-        public ICollection<Tag> Tags { get; set; } = new Collection<Tag>();
-        public ICollection<Image> Images { get; set; } = new Collection<Image>();
-        public ICollection<Comment> Comments { get; set; } = new Collection<Comment>();
         public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
+        public ICollection<PostTag> Tags { get; set; } = new Collection<PostTag>();
+        public ICollection<Image> Images { get; set; } = new Collection<Image>();
+        public ICollection<Comment> Comments { get; set; } = new Collection<Comment>();
     }
 }
