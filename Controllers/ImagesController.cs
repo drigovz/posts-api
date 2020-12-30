@@ -40,6 +40,9 @@ namespace PostsApi.Controllers
                     string directoryPath = "/uploads/posts-images/";
                     List<ImageDTO> listImages = new List<ImageDTO>();
 
+                    if (!Directory.Exists(_environment.WebRootPath + directoryPath))
+                        Directory.CreateDirectory(_environment.WebRootPath + directoryPath);
+
                     foreach (var file in fileUpload)
                     {
                         string extension = Path.GetExtension(file.FileName.ToString().Trim()),
