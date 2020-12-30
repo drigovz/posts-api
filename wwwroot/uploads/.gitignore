@@ -2,5 +2,5 @@
 # !/posts
 # /posts/*
 
-/posts/*.png
+*.png
 !.gitignore
