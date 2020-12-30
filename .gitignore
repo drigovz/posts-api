@@ -1,7 +1,7 @@
 ### my options
 
 # ignore files in folder of images
-wwwroot/files/images/posts
+wwwroot/files/posts/*.*
 
 # Created by https://www.toptal.com/developers/gitignore/api/dotnetcore,csharp,aspnetcore,node,visualstudio,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=dotnetcore,csharp,aspnetcore,node,visualstudio,visualstudiocode
