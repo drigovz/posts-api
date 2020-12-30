@@ -10,6 +10,8 @@ using PostsApi.Repository;
 using PostsApi.DTOs;
 using PostsApi.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace PostsApi.Controllers
 {
@@ -21,11 +23,13 @@ namespace PostsApi.Controllers
     {
         private readonly IUnitOfWork _uof;
         private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _environment;
 
-        public PostsController(IUnitOfWork uof, IMapper mapper)
+        public PostsController(IUnitOfWork uof, IMapper mapper, IWebHostEnvironment environment)
         {
             _uof = uof;
             _mapper = mapper;
+            _environment = environment;
         }
 
         [HttpGet]
@@ -181,6 +185,7 @@ namespace PostsApi.Controllers
                 await _uof.Commit();
 
                 var result = _mapper.Map<PostDTO>(post);
+                // chama método passando o id do post recem cadastrado                 
                 return new ObjectResult(result);
             }
             catch
@@ -227,6 +232,53 @@ namespace PostsApi.Controllers
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Error when try to delete post id {id}");
+            }
+        }
+
+        [HttpPost("image/upload/{id:int}", Name = "upload")]
+        public async Task<string> SendFile([FromForm] IFormFile fileUpload, [BindRequired] int id)
+        {
+            if (fileUpload.Length > 0)
+            {
+                try
+                {
+                    string guid = Guid.NewGuid().ToString("n"),
+                           directoryPath = "/files/images/posts/",
+                           extension = Path.GetExtension(fileUpload.FileName.ToString().Trim()),
+                           originalPath = "",
+                           image = "",
+                           guidFormat = String.Format("{0}-{1}-{2}", guid.Substring(0, 4), guid.Substring(5, 4), guid.Substring(8, 4));
+
+                    if (!Directory.Exists(_environment.WebRootPath + directoryPath))
+                        Directory.CreateDirectory(_environment.WebRootPath + directoryPath);
+
+                    originalPath = $"{directoryPath}img_{guidFormat}{extension}";
+                    image = $"img_{guidFormat}{extension}";
+
+                    using (FileStream filestream = System.IO.File.Create(_environment.WebRootPath + directoryPath + image))
+                    {
+                        await fileUpload.CopyToAsync(filestream);
+                        filestream.Flush();
+
+                        if (!String.IsNullOrEmpty(originalPath))
+                        {
+                            var post = await _uof.PostsRepository.GetByIdAsync(p => p.Id == id);
+                            post.Image = originalPath;
+                            _uof.PostsRepository.Update(post);
+                            await _uof.Commit();
+                        }
+
+                        return originalPath;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
+            }
+            else
+            {
+                return "An error in upload files from server";
             }
         }
     }

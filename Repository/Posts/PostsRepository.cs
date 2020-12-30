@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +35,7 @@ namespace PostsApi.Repository.Posts
         public async Task<IEnumerable<Post>> GetPostsByTag(string tag)
         {
             // return await Get().Where(p => p.Tags.Any(t => t.Tags.Select(x => x.Name== tag))).ToListAsync();
-            return await Get().Where(p => p.Tags.Any(t => t.Tags.Name== tag)).ToListAsync();
+            return await Get().Where(p => p.Tags.Any(t => t.Tags.Name == tag)).ToListAsync();
         }
     }
 }

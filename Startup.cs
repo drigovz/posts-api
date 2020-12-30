@@ -1,3 +1,4 @@
+using System.IO;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,6 +17,10 @@ namespace PostsApi
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                              .SetBasePath(Directory.GetCurrentDirectory())
+                              .AddJsonFile("appsettings.json");
+            configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -47,6 +52,8 @@ namespace PostsApi
             }
 
             //app.UseHttpsRedirection();
+
+            app.UseStaticFiles();
 
             app.UseRouting();
 
