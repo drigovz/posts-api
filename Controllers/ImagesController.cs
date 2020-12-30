@@ -37,26 +37,24 @@ namespace PostsApi.Controllers
             {
                 try
                 {
-                    string directoryPath = "/uploads/posts-images/";
+                    string directory = "/uploads/posts-images/";
                     List<ImageDTO> listImages = new List<ImageDTO>();
 
-                    if (!Directory.Exists(_environment.WebRootPath + directoryPath))
-                        Directory.CreateDirectory(_environment.WebRootPath + directoryPath);
+                    if (!Directory.Exists(_environment.WebRootPath + directory))
+                        Directory.CreateDirectory(_environment.WebRootPath + directory);
 
                     foreach (var file in fileUpload)
                     {
                         string extension = Path.GetExtension(file.FileName.ToString().Trim()),
                                guid = Guid.NewGuid().ToString("n"),
-                               guidFormat = String.Format("{0}-{1}-{2}", guid.Substring(0, 4), guid.Substring(5, 4), guid.Substring(8, 4)),
-                               originalPath = $"{directoryPath}img_{guidFormat}{extension}",
-                               image = $"img_{guidFormat}{extension}";
+                               guidFormated = String.Format("{0}-{1}-{2}", guid.Substring(0, 4), guid.Substring(5, 4), guid.Substring(8, 4)),
+                               image = $"img_{guidFormated}{extension}",
+                               path = $"{directory}{image}";
 
-                        using (var stream = System.IO.File.Create(_environment.WebRootPath + directoryPath + image))
-                        {
+                        using (var stream = System.IO.File.Create(_environment.WebRootPath + directory + image))
                             await file.CopyToAsync(stream);
-                        }
 
-                        ImageDTO obj = new ImageDTO() { Description = image, Url = originalPath, PostId = postId };
+                        ImageDTO obj = new ImageDTO() { Description = image, Url = path, PostId = postId };
                         var resultImage = _mapper.Map<Image>(obj);
                         _uof.ImagesRepository.Add(resultImage);
                         await _uof.Commit();
@@ -73,9 +71,7 @@ namespace PostsApi.Controllers
                 }
             }
             else
-            {
                 return Ok("Request does not contain images");
-            }
         }
     }
 }

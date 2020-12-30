@@ -241,32 +241,32 @@ namespace PostsApi.Controllers
                 try
                 {
                     string guid = Guid.NewGuid().ToString("n"),
-                           directoryPath = "/uploads/posts/",
+                           directory = "/uploads/posts/",
                            extension = Path.GetExtension(fileUpload.FileName.ToString().Trim()),
-                           originalPath = "",
+                           path = "",
                            image = "",
-                           guidFormat = String.Format("{0}-{1}-{2}", guid.Substring(0, 4), guid.Substring(5, 4), guid.Substring(8, 4));
+                           guidFormated = String.Format("{0}-{1}-{2}", guid.Substring(0, 4), guid.Substring(5, 4), guid.Substring(8, 4));
 
-                    if (!Directory.Exists(_environment.WebRootPath + directoryPath))
-                        Directory.CreateDirectory(_environment.WebRootPath + directoryPath);
+                    if (!Directory.Exists(_environment.WebRootPath + directory))
+                        Directory.CreateDirectory(_environment.WebRootPath + directory);
 
-                    originalPath = $"{directoryPath}img_{guidFormat}{extension}";
-                    image = $"img_{guidFormat}{extension}";
+                    image = $"img_{guidFormated}{extension}";
+                    path = $"{directory}{image}";
 
-                    using (FileStream filestream = System.IO.File.Create(_environment.WebRootPath + directoryPath + image))
+                    using (FileStream filestream = System.IO.File.Create(_environment.WebRootPath + directory + image))
                     {
                         await fileUpload.CopyToAsync(filestream);
                         filestream.Flush();
 
-                        if (!String.IsNullOrEmpty(originalPath))
+                        if (!String.IsNullOrEmpty(path))
                         {
                             var post = await _uof.PostsRepository.GetByIdAsync(p => p.Id == id);
-                            post.Image = originalPath;
+                            post.Image = path;
                             _uof.PostsRepository.Update(post);
                             await _uof.Commit();
                         }
 
-                        return originalPath;
+                        return path;
                     }
                 }
                 catch (Exception ex)
@@ -275,9 +275,7 @@ namespace PostsApi.Controllers
                 }
             }
             else
-            {
                 return "An error in upload files from server";
-            }
         }
     }
 }
