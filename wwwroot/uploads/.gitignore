@@ -1,0 +1,6 @@
+
+# !/posts
+# /posts/*
+
+/posts/*.png
+!.gitignore
