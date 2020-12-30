@@ -243,7 +243,7 @@ namespace PostsApi.Controllers
                 try
                 {
                     string guid = Guid.NewGuid().ToString("n"),
-                           directoryPath = "/files/images/posts/",
+                           directoryPath = "/uploads/posts/",
                            extension = Path.GetExtension(fileUpload.FileName.ToString().Trim()),
                            originalPath = "",
                            image = "",
