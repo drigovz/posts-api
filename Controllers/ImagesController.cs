@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PostsApi.DTOs;
 using PostsApi.Models;
 using PostsApi.Repository;
@@ -20,7 +22,6 @@ namespace PostsApi.Controllers
         private readonly IUnitOfWork _uof;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _environment;
-        private const string directoryPath = "\\files\\images\\posts\\";
 
         public ImagesController(IUnitOfWork uof, IMapper mapper, IWebHostEnvironment environment)
         {
@@ -29,53 +30,48 @@ namespace PostsApi.Controllers
             _environment = environment;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] ImageDTO imageDTO)
+        [HttpPost("upload/{postId:int}")]
+        public async Task<IActionResult> SendFile([FromForm] List<IFormFile> fileUpload, [BindRequired] int postId)
         {
-            try
-            {
-                if (imageDTO == null)
-                    return BadRequest();
-
-                var image = _mapper.Map<Image>(imageDTO);
-                _uof.ImagesRepository.Add(image);
-                await _uof.Commit();
-
-                var result = _mapper.Map<ImageDTO>(image);
-                return new ObjectResult(result);
-            }
-            catch
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error when try to create a new image");
-            }
-        }
-
-        [HttpPost("upload")]
-        public async Task<string> SendFile([FromForm] IFormFile fileUpload)
-        {
-            if (fileUpload.Length > 0)
+            if (fileUpload.Count > 0)
             {
                 try
                 {
-                    if (!Directory.Exists(_environment.WebRootPath + directoryPath))
-                        Directory.CreateDirectory(_environment.WebRootPath + directoryPath);
+                    string directoryPath = "/uploads/posts-images/";
+                    List<ImageDTO> listImages = new List<ImageDTO>();
 
-                    using (FileStream filestream = System.IO.File.Create(_environment.WebRootPath + directoryPath + fileUpload.FileName))
+                    foreach (var file in fileUpload)
                     {
-                        await fileUpload.CopyToAsync(filestream);
-                        filestream.Flush();
-                        var directorySave = directoryPath + fileUpload.FileName;
-                        return directorySave;
+                        string extension = Path.GetExtension(file.FileName.ToString().Trim()),
+                               guid = Guid.NewGuid().ToString("n"),
+                               guidFormat = String.Format("{0}-{1}-{2}", guid.Substring(0, 4), guid.Substring(5, 4), guid.Substring(8, 4)),
+                               originalPath = $"{directoryPath}img_{guidFormat}{extension}",
+                               image = $"img_{guidFormat}{extension}";
+
+                        using (var stream = System.IO.File.Create(_environment.WebRootPath + directoryPath + image))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        ImageDTO obj = new ImageDTO() { Description = image, Url = originalPath, PostId = postId };
+                        var resultImage = _mapper.Map<Image>(obj);
+                        _uof.ImagesRepository.Add(resultImage);
+                        await _uof.Commit();
+
+                        var resultImageDTO = _mapper.Map<ImageDTO>(resultImage);
+                        listImages.Add(resultImageDTO);
                     }
+
+                    return Ok(listImages);
                 }
                 catch (Exception ex)
                 {
-                    return ex.Message.ToString();
+                    return BadRequest("An error ocurred: \n" + ex.Message.ToString());
                 }
             }
             else
             {
-                return "An error in upload files from server";
+                return Ok("Request does not contain images");
             }
         }
     }

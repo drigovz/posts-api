@@ -180,12 +180,10 @@ namespace PostsApi.Controllers
                     return BadRequest();
 
                 var post = _mapper.Map<Post>(postDTO);
-                //post.Category = await _uof.CategoriesRepository.GetByIdAsync(c => c.Id == post.CategoryId);            
                 _uof.PostsRepository.Add(post);
                 await _uof.Commit();
 
                 var result = _mapper.Map<PostDTO>(post);
-                // chama método passando o id do post recem cadastrado                 
                 return new ObjectResult(result);
             }
             catch
@@ -235,7 +233,7 @@ namespace PostsApi.Controllers
             }
         }
 
-        [HttpPost("image/upload/{id:int}", Name = "upload")]
+        [HttpPost("image/upload/{id:int}")]
         public async Task<string> SendFile([FromForm] IFormFile fileUpload, [BindRequired] int id)
         {
             if (fileUpload.Length > 0)
