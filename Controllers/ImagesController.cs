@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
@@ -37,6 +38,7 @@ namespace PostsApi.Controllers
             {
                 try
                 {
+                    string[] extensions = new string[] { ".png", ".jpg", ".jpeg", ".gif", ".tiff", ".bmp", ".svg", ".webp" };
                     string directory = "/uploads/posts-images/";
                     List<ImageDTO> listImages = new List<ImageDTO>();
 
@@ -50,6 +52,9 @@ namespace PostsApi.Controllers
                                guidFormated = String.Format("{0}-{1}-{2}", guid.Substring(0, 4), guid.Substring(5, 4), guid.Substring(8, 4)),
                                image = $"img_{guidFormated}{extension}",
                                path = $"{directory}{image}";
+
+                        if (!extensions.Contains(extension))
+                            return BadRequest($"The extension {extension} not supported!");
 
                         using (var stream = System.IO.File.Create(_environment.WebRootPath + directory + image))
                             await file.CopyToAsync(stream);

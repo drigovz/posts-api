@@ -234,18 +234,22 @@ namespace PostsApi.Controllers
         }
 
         [HttpPost("image/upload/{id:int}")]
-        public async Task<string> SendFile([FromForm] IFormFile fileUpload, [BindRequired] int id)
+        public async Task<IActionResult> SendFile([FromForm] IFormFile fileUpload, [BindRequired] int id)
         {
             if (fileUpload.Length > 0)
             {
                 try
                 {
+                    string[] extensions = new string[] { ".png", ".jpg", ".jpeg", ".gif", ".tiff", ".bmp", ".svg", ".webp" };
                     string guid = Guid.NewGuid().ToString("n"),
                            directory = "/uploads/posts/",
                            extension = Path.GetExtension(fileUpload.FileName.ToString().Trim()),
                            path = "",
                            image = "",
                            guidFormated = String.Format("{0}-{1}-{2}", guid.Substring(0, 4), guid.Substring(5, 4), guid.Substring(8, 4));
+
+                    if (!extensions.Contains(extension))
+                        return BadRequest($"The extension {extension} not supported!");
 
                     if (!Directory.Exists(_environment.WebRootPath + directory))
                         Directory.CreateDirectory(_environment.WebRootPath + directory);
@@ -266,16 +270,16 @@ namespace PostsApi.Controllers
                             await _uof.Commit();
                         }
 
-                        return path;
+                        return Ok(path);
                     }
                 }
                 catch (Exception ex)
                 {
-                    return ex.Message;
+                    return BadRequest("An error ocurred: \n" + ex.Message.ToString());
                 }
             }
             else
-                return "An error in upload files from server";
+                return Ok("Request does not contain images");
         }
     }
 }
