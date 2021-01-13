@@ -10,6 +10,15 @@ namespace PostsApi.Data
         {
         }
 
+        public AppDbContext()
+        {
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("Data Source=DESKTOP-8SL6PE8; initial catalog=PostsApiDb; user id=sa; password=sa12345");
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PostTag>().HasKey(x => new { x.PostId, x.TagId });
